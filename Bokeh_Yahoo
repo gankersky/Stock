@@ -1,0 +1,77 @@
+# coding: utf-8
+from bokeh.plotting import ColumnDataSource, figure, output_file, show
+from bokeh.models import HoverTool
+from bokeh.models import BasicTickFormatter
+import datetime
+from yahoo_fin import stock_info as si
+import time
+
+output_file("toolbar.html")
+
+ak_li = ["MTX.DU","TKA.DE","ZAL.DE",'DAI.DE','C001.DE']
+def Ak_Bok(akname):
+	val_li = []
+	for i in range(90):
+		value_all = si.get_data(akname,start_date =(datetime.datetime.now() + datetime.timedelta(days=-(i+1))))
+		value_each = value_all['close'][0]
+		val_li.append(value_each)
+	#print(val_li)
+	return val_li
+
+end = datetime.date.today() + datetime.timedelta(-1)
+datetime_list = list(datetime.datetime.now() + datetime.timedelta(days=-(i+1)) for i in range(90))
+date_list = list(dt.strftime('%Y-%m-%d') for dt in datetime_list)
+value_list = []
+value_list=Ak_Bok(ak_li[2])
+netChg_list = []
+
+for i in range(91):
+	if i == 0:
+		continue
+	elif i < 90:
+		netc = 100*(value_list[i-1] - value_list[i])/value_list[i]
+		#netc_f = str(float('%.5f' % netc))
+		netChg_list.append(netc)
+	else:
+		netChg_list.append(0)
+
+print(netChg_list[::-1])
+datetime_list=datetime_list[::-1]
+value_list=value_list[::-1]
+netChg_list=netChg_list[::-1]
+
+source = ColumnDataSource(data=dict(
+    x=datetime_list,
+    y=value_list,
+    descy=netChg_list,
+))
+
+y_name = 'y'
+#desc = 'desc'+y_name
+#print(desc)
+hover=HoverTool(
+    tooltips=[  #这里把需要的数据都列出来
+    	("Day", "$index"),
+        ( 'Time',    '@x{%F}'            ),
+        ( 'Price',   '@%s€'%y_name ), # use @{ } for field names with spaces
+        ( 'NetChg',  '@descy%' ),
+    ],
+
+    formatters={   #这里注意格式
+        '@x'    : 'datetime', # use 'datetime' formatter for '@date' field
+        '@desc' : 'printf',   # use 'printf' formatter for '@{adj close}' field
+                                     # use default 'numeral' formatter for other fields
+    },
+
+    # display a tooltip whenever the cursor is vertically in line with a glyph
+    mode='vline'
+)
+TOOLS = "hover,crosshair,pan,wheel_zoom,box_zoom,reset,save,box_select"
+p = figure(plot_width=800, plot_height=400, x_axis_type='datetime',
+			x_axis_label='Date',
+			y_axis_label='Price',tools=[hover],
+			y_range = (0,max(value_list)*(1.5)),title="The Stock Info")
+p.line('x', '%s'%y_name, legend="ZAL.DE",source=source,color='navy',alpha=1)
+#p.circle('x', 'y', size=2, source=source)    # source is very important
+
+show(p)
