@@ -1,0 +1,65 @@
+# -*- coding: utf-8 -*-
+import datetime
+from yahoo_fin import stock_info as si
+import datetime
+import time
+import sys
+
+
+
+
+# 设置起始时间
+start = datetime.date.today() + datetime.timedelta(-1)
+end = datetime.date.today()
+
+print(si.get_quote_table('MTX.DE')) #show the info of MTX.DE
+
+#\ 033 [显示方式;字体色;背景色m ...... [\ 033 [0m]
+def diff_p(akname,last,new):
+	all_info=si.get_data(akname,start_date=start)
+	other_info = si.get_quote_table(akname) #两种都可以，带日期那组实时数据更多
+	all_high_p = all_info['high']
+	#ll_close_p = all_info['close']
+	other_close_p = other_info['Previous Close']
+	#div_p_1 = (new-open_p_1)/open_p_1
+	#print(open_p)
+	#print(open_p_1)
+	#print(div_p_1)
+	diff = new - last
+
+	div_p = 100*(new-other_close_p)/other_close_p
+
+	if diff < 0:
+		return ('\033[1;37m %f %f%% \033[0m \n \033[1;31m Down: %f  \033[0m' %(new,div_p,diff))
+	elif diff == 0:
+		return ('\033[1;37m %f %f%% \033[0m \n \033[1;30m Keep: %f  \033[0m' %(new,div_p,diff))
+	else:
+		return ('\033[1;37m %f %f%% \033[0m \n \033[1;32m Raise: %f  \033[0m' %(new,div_p,diff)) #注意浮点数用%f
+print('The watching list:')
+while 1:
+	ak_li = ["MTX.DU","TKA.DE","ZAL.DE",'DAI.DE','C001.DE']
+	
+	last_price_0 = si.get_live_price(ak_li[0])
+	last_price_1 = si.get_live_price(ak_li[1])
+	last_price_2 = si.get_live_price(ak_li[2])
+	last_price_3 = si.get_live_price(ak_li[3])
+	
+	time.sleep(5)
+	print('%s' %time.asctime(time.localtime(time.time())))
+	new_price_0 = si.get_live_price((ak_li[0]))
+	print('\033[1;46m %s \033[0m Live Price:\n' %ak_li[0], diff_p(ak_li[0],last_price_0,new_price_0))
+	new_price_1 = si.get_live_price((ak_li[1]))
+	print('\033[1;46m %s \033[0m Live Price:\n' %ak_li[1], diff_p(ak_li[1],last_price_1,new_price_1))
+	new_price_2 = si.get_live_price((ak_li[2]))
+	print('\033[1;46m %s \033[0m Live Price:\n' %ak_li[2], diff_p(ak_li[2],last_price_2,new_price_2))
+	new_price_3 = si.get_live_price((ak_li[3]))
+	print('\033[1;46m %s \033[0m Live Price:\n' %ak_li[3], diff_p(ak_li[3],last_price_3,new_price_3))
+
+	#print("\r {:^3.0f}%[{}->{}]{:.2f}s".format(c,a,b,dur), flush = True, end="")
+	#\r 用来在每次输出完成后，将光标移至首行，这样保证进度条始终在同一行输出，即在一行不断刷新的效果。{:3.0f}
+	#输出格式为居中，占3位，小数点后0位，浮点型数，对应输出的数为c，{}对应的输出为a，{}对应的输出为b，{:2f}
+	#输出有两位小数的浮点数，对应的输出为dur，end=‘’ 用来保证不换行，不加这句默认换行。
+
+
+
+
