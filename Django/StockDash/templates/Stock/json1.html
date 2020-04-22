@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery-3.0.0.min.js"></script>
+    <script>
+        $(function () {
+            $('#btnJson').click(function () {
+                $.get('/Stock/json2',function (data) {
+                    ul=$('#jsonList');
+                    ul.append('<li>'+data['h1']+'</li>')
+                    ul.append('<li>'+data['h2']+'</li>')
+                })
+            });
+        });
+    </script>
+</head>
+<body>
+    <input type="button" id="btnJson" value="获取json数据">
+    <ul id="jsonList"></ul>
+</body>
+</html>
+

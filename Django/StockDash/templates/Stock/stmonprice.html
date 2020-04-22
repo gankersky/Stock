@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Month Price</title>
+</head>
+<body>
+
+<h1 style = 'background: green'>{{Stock_Name}}</h1>
+<h2 style = 'background: green'>{{stock}}</h2>
+<table>
+    <thead>
+    <tr>
+        <th>{{time}}</th>
+        <th>{{Stock_Name}}</th>
+        <th>{{price}}</th>
+        <th>{{vol}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for stockinfo in stock_mon_price %}
+    <tr>
+        <td>{{stockinfo.Data}}</td>
+        <td>{{stock}}</td>
+        <td>{{stockinfo.Close}}</td>
+        <td>{{stockinfo.Volume}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

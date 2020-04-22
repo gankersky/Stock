@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Day Price</title>
+
+</head>
+<body>
+
+<h1 style = 'background: green'>{{Stock_Name}}</h1>
+<ul>
+    {% for stockinfo in stock_day_price %}
+        <li>{{stockinfo.Data}}</li>
+        <li>{{stockinfo.st_name}}</li>
+        <li>{{stockinfo.Close}}</li>
+        <li>{{stockinfo.Volume}}</li>
+
+    {% endfor %}
+</ul>
+</body>
+</html>

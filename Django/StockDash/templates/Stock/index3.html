@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    $(document).ready(function(){
+        function refresh(){
+            $.getJSON("/index3/", function (ret) {
+                $('#result').html(ret.data1);
+                $('#result2').html(ret.data2);
+            })
+        }
+        setInterval(refresh, 3000)
+    })
+</script>
+
+</body>
+</html>
