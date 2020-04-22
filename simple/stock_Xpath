@@ -1,0 +1,37 @@
+import requests 
+import lxml
+from lxml import etree
+import json
+
+import threading as thd
+import time
+
+
+def stock_price():
+    headers = {
+            'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36 Core/1.47.933.400 QQBrowser/9.4.8699.400',
+        }
+
+    r= requests.get('https://finance.yahoo.com/quote/ZAL.DE?p=ZAL.DE',headers=headers)
+    r.encoding = "utf-8"
+    #构造一个xpath解析对象
+    selector = etree.HTML(r.text)
+    p_money = selector.xpath('//div[@class="My(6px) Pos(r) smartphone_Mt(6px)"]//span[@data-reactid="32"]/text()')
+    p_NetChg = selector.xpath('//div[@class="My(6px) Pos(r) smartphone_Mt(6px)"]//span[@data-reactid="33"]/text()')
+    p_time = selector.xpath('//div[@class="My(6px) Pos(r) smartphone_Mt(6px)"]//span[@data-reactid="35"]/text()')
+    a,b,c=p_money[0],p_NetChg[0],p_time[0]
+    return a,b,c
+
+ #    print(p_money[0],p_NetChg[0],p_time[0])
+	# print(str(selector))
+
+li_a = []
+def fn():
+    a,b,c=stock_price()
+
+    li_a.append(a)
+    print(time.time(),li_a)
+
+    thd.Timer(3,fn).start()
+    return li_a
+print(fn())
